@@ -152,7 +152,7 @@ if concept:
     with st.chat_message("assistant"):
         st.markdown(st.session_state.response)
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.messages.append({"role": "assistant", "content": st.session_state.response})
 
     col1, col2, col3, col4 = st.columns([1, 3,1, 1])
 
