@@ -119,7 +119,7 @@ with col1:
 if concept:
     # Define the system prompt
     st.session_state.system_prompt = f"""
-    <bos> <start_of_turn> user
+    <start_of_turn> user
     You are a personalized AI tutor. Your primary functions are:
     1. Teach the concept of '{concept}' in a way that is suitable for a {level}.
     2. If the user has selected a learning style, explain the concept in the tone of a '{persona_style}'.
