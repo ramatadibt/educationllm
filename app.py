@@ -41,6 +41,8 @@ if  'response' not in st.session_state:
     st.session_state.response = ''
 if 'system_prompt2' not in st.session_state:
     st.session_state.system_prompt2 = ""
+if 'question'  not in st.session_state:
+    st.session_state.question = ''
 
 def reset_conversation():
   st.session_state.messages = []
