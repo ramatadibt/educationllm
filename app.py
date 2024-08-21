@@ -159,18 +159,17 @@ if concept:
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": st.session_state.response})
 
-    col1, col2, col3, col4 = st.columns([1, 3,1, 1])
-
+    
     if not st.session_state.quiz_started:
-        col1, col2, col3, col4 = st.columns([1, 3, 1, 1])
-        with col2:
+        col1, col2, col3 = st.columns([4, 1, 1])
+        with col1:
             st.markdown(
             f'<p style="color: white; font-size: 24px; font-weight: bold;">Hey champ! Wanna take a quiz on <span style="color: #FFD700; font-size: 24px; font-weight: bold;">{concept} </span>?</p>',
             unsafe_allow_html=True)
-        with col3:
+        with col2:
             if st.button("Yes"):
                 st.session_state.quiz_started = True
-        with col4:
+        with col3:
             if st.button("No"):
                 st.write("Okay, no quiz for now!")
 
