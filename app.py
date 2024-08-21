@@ -110,7 +110,7 @@ with col1:
 
 if concept:
     # Define the system prompt
-    system_prompt = f"""
+    st.session_state.system_prompt = f"""
     You are a personalized AI tutor. Your primary functions are:
     1. Teach the concept of '{concept}' in a way that is suitable for a {level}.
     2. If the user has selected a learning style, explain the concept in the tone of a '{persona_style}'.
@@ -141,7 +141,7 @@ if concept:
     # st.session_state.messages.append({"role": "user", "content": prompt})
 
     
-    response = llm.invoke(system_prompt)
+    response = llm.invoke(st.session_state.system_prompt)
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         st.markdown(response)
