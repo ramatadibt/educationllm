@@ -317,5 +317,6 @@ else:
 st.write(st.session_state.full_prompt)
 st.title('-------------------')
 st.write(st.session_state.conversation_history)
+st.title(st.session_state.question)
    
 
