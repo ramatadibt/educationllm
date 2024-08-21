@@ -5,8 +5,8 @@ import os
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from PIL import Image
 
-HUGGINGFACEHUB_API_TOKEN =  st.secrets['HUGGINGFACEHUB_API_TOKEN']
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+# HUGGINGFACEHUB_API_TOKEN =  st.secrets['HUGGINGFACEHUB_API_TOKEN']
+# os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
 
 # Simulated LLM functions (replace these with actual LLM API calls)
@@ -166,17 +166,101 @@ if concept:
         
 
 
+# def handle_input_change():
+#     # Retrieve the current input value directly from the session state
+#     current_input_key = f"user_answer_{st.session_state.current_question}"
+#     user_answer = st.session_state.get(current_input_key, "")
+
+#     st.session_state.conversation_history.append(f"<User Answer>: {user_answer} </User Answer>")
+#     st.session_state.current_question += 1
+    
+conversation_history = []
 def handle_input_change():
     # Retrieve the current input value directly from the session state
     current_input_key = f"user_answer_{st.session_state.current_question}"
     user_answer = st.session_state.get(current_input_key, "")
-
-    st.session_state.conversation_history.append(f"<User Answer>: {user_answer} </User Answer>")
+    
+    conversation_history.append(f"<User Answer>: {user_answer} </User Answer>")
+    st.session_state.full_prompt +=   " ".join(conversation_history)
     st.session_state.current_question += 1
 
 
-if st.session_state.quiz_started:
-    system_prompt2 = '''
+# if st.session_state.quiz_started:
+#     system_prompt2 = '''
+#     Now based on the concept explained
+#     1. Create a quiz with 5 questions in multiple choice format of '{difficulty_level}' level to assess the user's understanding.
+#     2. Identify any areas where the user struggled and provide additional explanations for those topics based on the answers the user give to you. 
+#     3. Give only one question at a time and one the user gives the response, give him the next question without revealing anything about the previous question. 
+#     4. Once the user has given the response for 5 questions, then give the report card of the quiz of how many questions were correct and how many were wrong. 
+    
+#     '''
+
+#     # system_prompt2 = ''
+#     # if st.session_state.current_question < 5:
+#     #     # Combine all previous conversation history with the current prompts
+#     #     st.session_state.full_prompt = system_prompt + " " + response + " " + system_prompt2 + " " + " ".join(st.session_state.conversation_history)
+        
+#     #     # Generate the next question
+#     #     st.session_state.full_prompt += f" Now generate question number {st.session_state.current_question + 1}."
+#     #     # question = llm.invoke(st.session_state.full_prompt)
+#     #     question = st.session_state.full_prompt
+        
+#     #     # Display the question
+#     #     with st.chat_message("assistant"):
+#     #         st.markdown(question)
+        
+#     #     # Add question to conversation history
+#     #     st.session_state.conversation_history.append(f"<AI Tutor Question>: {question} + </AI Tutor Question>: ")
+
+#     st.session_state.full_prompt = system_prompt + " " + response + " " + system_prompt2 + " " 
+#     if st.session_state.current_question < 5:
+#         st.title('The length of prompt' + str(len(st.session_state.full_prompt)))
+#         # Combine all previous conversation history with the current prompts
+#         st.session_state.full_prompt += " ".join(st.session_state.conversation_history)
+        
+#         # Generate the next question
+#         st.session_state.full_prompt += f" Now generate question number {st.session_state.current_question + 1}."
+#         question = llm.invoke(st.session_state.full_prompt)
+#         print('QUESITON NO ', st.session_state.current_question, '  ', question)
+#         # question = st.session_state.full_prompt
+        
+#         # Display the question
+#         with st.chat_message("assistant"):
+#             st.markdown(question)
+        
+#         # Add ONLY the current question to conversation history
+#         current_question_text = question.split("Now generate question number")[-1].strip()  # Extract the current question
+#         st.session_state.conversation_history.append(f"<AI Tutor Question>: {current_question_text} + </AI Tutor Question>: ")
+    
+#         # React to user input
+#         user_answer = st.text_input(
+#         f"Enter your answer for question {st.session_state.current_question + 1}",
+#         key=f"user_answer_{st.session_state.current_question}",
+#         on_change=handle_input_change
+#     )
+        
+      
+
+       
+
+#     elif not st.session_state.quiz_complete:
+#         # After all questions, generate the report card
+#         report_prompt = st.session_state.full_prompt  + " Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong."
+#         report = llm.invoke(report_prompt)
+#         # report = report_prompt
+        
+#         with st.chat_message("assistant"):
+#             st.markdown(report)
+        
+#         st.session_state.quiz_complete = True
+
+#     else:
+#         st.write("Quiz completed. Thank you for participating!")
+
+
+
+if not st.session_state.quiz_started:
+    st.session_state.system_prompt2 = '''
     Now based on the concept explained
     1. Create a quiz with 5 questions in multiple choice format of '{difficulty_level}' level to assess the user's understanding.
     2. Identify any areas where the user struggled and provide additional explanations for those topics based on the answers the user give to you. 
@@ -184,68 +268,43 @@ if st.session_state.quiz_started:
     4. Once the user has given the response for 5 questions, then give the report card of the quiz of how many questions were correct and how many were wrong. 
     
     '''
-
-    # system_prompt2 = ''
-    # if st.session_state.current_question < 5:
-    #     # Combine all previous conversation history with the current prompts
-    #     st.session_state.full_prompt = system_prompt + " " + response + " " + system_prompt2 + " " + " ".join(st.session_state.conversation_history)
-        
-    #     # Generate the next question
-    #     st.session_state.full_prompt += f" Now generate question number {st.session_state.current_question + 1}."
-    #     # question = llm.invoke(st.session_state.full_prompt)
-    #     question = st.session_state.full_prompt
-        
-    #     # Display the question
-    #     with st.chat_message("assistant"):
-    #         st.markdown(question)
-        
-    #     # Add question to conversation history
-    #     st.session_state.conversation_history.append(f"<AI Tutor Question>: {question} + </AI Tutor Question>: ")
-
-    st.session_state.full_prompt = system_prompt + " " + response + " " + system_prompt2 + " " 
+    st.session_state.full_prompt = st.session_state.system_prompt + " " + st.session_state.response + \
+    " " +  st.session_state.system_prompt2 
+    # st.session_state.system_prompt2 = 'QUIZ_PROMPT'
+    
+else:
     if st.session_state.current_question < 5:
         st.title('The length of prompt' + str(len(st.session_state.full_prompt)))
-        # Combine all previous conversation history with the current prompts
-        st.session_state.full_prompt += " ".join(st.session_state.conversation_history)
         
-        # Generate the next question
-        st.session_state.full_prompt += f" Now generate question number {st.session_state.current_question + 1}."
+        # Generate the next question and append it to the full_prompt
+        st.session_state.question = f" Now generate question number {st.session_state.current_question + 1}."
+        st.session_state.full_prompt += st.session_state.question
         question = llm.invoke(st.session_state.full_prompt)
         print('QUESITON NO ', st.session_state.current_question, '  ', question)
-        # question = st.session_state.full_prompt
-        
+
         # Display the question
         with st.chat_message("assistant"):
             st.markdown(question)
         
         # Add ONLY the current question to conversation history
-        current_question_text = question.split("Now generate question number")[-1].strip()  # Extract the current question
-        st.session_state.conversation_history.append(f"<AI Tutor Question>: {current_question_text} + </AI Tutor Question>: ")
+        current_question_text = st.session_state.question.split("Now generate question number")[-1].strip()  # Extract the current question
+        conversation_history.append(f": {current_question_text}")
     
         # React to user input
         user_answer = st.text_input(
         f"Enter your answer for question {st.session_state.current_question + 1}",
         key=f"user_answer_{st.session_state.current_question}",
         on_change=handle_input_change
-    )
-        
-      
-
-       
-
-    elif not st.session_state.quiz_complete:
-        # After all questions, generate the report card
+    )   
+        # Combine all previous conversation history with the current prompts
+        # st.session_state.full_prompt = st.session_state.full_prompt + " " + " ".join(st.session_state.conversation_history)
+    if st.session_state.current_question == 5:
+        print('^^^^^^^^^^^^^^^^^^^^^^')
+        print('***********************')
         report_prompt = st.session_state.full_prompt  + " Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong."
-        report = llm.invoke(report_prompt)
-        # report = report_prompt
-        
         with st.chat_message("assistant"):
-            st.markdown(report)
-        
-        st.session_state.quiz_complete = True
+            st.markdown(report_prompt)
 
-    else:
-        st.write("Quiz completed. Thank you for participating!")
 
 
 
