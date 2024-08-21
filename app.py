@@ -35,6 +35,12 @@ if 'full_prompt' not in st.session_state:
     st.session_state.full_prompt = ''
 if 'user_answer' not in st.session_state:
     st.session_state.user_answer = ""
+if 'system_prompt' not in st.session_state:
+    st.session_state.system_prompt = ""
+if  'response' not in st.session_state:
+    st.session_state.response = ''
+if 'system_prompt2' not in st.session_state:
+    st.session_state.system_prompt2 = ""
 
 def reset_conversation():
   st.session_state.messages = []
@@ -141,10 +147,10 @@ if concept:
     # st.session_state.messages.append({"role": "user", "content": prompt})
 
     
-    response = llm.invoke(st.session_state.system_prompt)
+    st.session_state.response = llm.invoke(st.session_state.system_prompt)
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
-        st.markdown(response)
+        st.markdown(st.session_state.response)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
 
