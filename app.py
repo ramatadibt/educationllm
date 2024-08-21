@@ -11,8 +11,6 @@ os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
 # Simulated LLM functions (replace these with actual LLM API calls)
 
-import streamlit.components.v1 as components
-from streamlit_extras.stylable_container import stylable_container
 
 
 
@@ -72,33 +70,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <style>
-    .concept-text {
-        font-weight: bold;
-        color: #FFD700;  /* Bright color for the concept */
-        font-size: 20px;
-    }
-    .stButton > button {
-        width: 120px;
-        height: 50px;
-        font-size: 18px;
-        border-radius: 8px;
-        margin: 5px;
-    }
-    .stButton > button:first-child {
-        background-color: #28a745;  /* Green for Yes button */
-        color: white;
-    }
-    .stButton > button:last-child {
-        background-color: #dc3545;  /* Red for No button */
-        color: white;
-    }
-    </style>
-    """, 
-    unsafe_allow_html=True
-)
+
 
 
 col1, col2, col3 = st.columns([0.2,0.05,  0.75])
@@ -180,49 +152,18 @@ if concept:
 
     if not st.session_state.quiz_started:
         col1, col2, col3, col4 = st.columns([1, 3, 1, 1])
-        # with col2:
-        #     st.text(f'Hey champ! Wanna take a quiz on {concept}')
-        # with col3:
-        #     if st.button("Yes"):
-        #         st.session_state.quiz_started = True
-        # with col4:
-        #     if st.button("No"):
-        #         st.write("Okay, no quiz for now!")
-
         with col2:
-            st.markdown(f'<p style="color: white;">Hey champ! Wanna take a quiz on <span style="color: #FFD700;">{concept}</span>?</p>', unsafe_allow_html=True)
-        
+            st.markdown(
+            f'<p style="color: white; font-size: 24px; font-weight: bold;">Hey champ! Wanna take a quiz on <span style="color: #FFD700; font-size: 24px; font-weight: bold;">concept</span>?</p>',
+            unsafe_allow_html=True)
         with col3:
-            with stylable_container(
-                "green",
-                css_styles="""
-                button {
-                    background-color: #28a745;  /* Green color for Yes button */
-                    color: white;
-                    font-size: 18px;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    width: 100px;
-                }"""
-            ):
-                if st.button("Yes"):
-                    st.session_state.quiz_started = True
-        
+            if st.button("Yes"):
+                st.session_state.quiz_started = True
         with col4:
-            with stylable_container(
-                "red",
-                css_styles="""
-                button {
-                    background-color: #dc3545;  /* Red color for No button */
-                    color: white;
-                    font-size: 18px;
-                    padding: 10px 20px;
-                    border-radius: 8px;
-                    width: 100px;
-                }"""
-            ):
-                if st.button("No"):
-                    st.write("Okay, no quiz for now!")
+            if st.button("No"):
+                st.write("Okay, no quiz for now!")
+
+        
 
 
 def handle_input_change():
@@ -290,21 +231,7 @@ if st.session_state.quiz_started:
         
       
 
-        # if user_answer: 
-        #     st.title(f'user_answer, {user_answer}') 
-        #     st.session_state.full_prompt += '<User Answer: >' + user_answer + '</User Answer  3kd3i49384934eioruewiorsl>'
-        #     st.session_state.conversation_history.append(f"<User Answer :>  {user_answer} + </User Answer>")
-        #     st.session_state.current_question += 1
-            
-        # st.write(st.session_state.full_prompt)
-        
-
-        # user_answer = st.text_input(f"Enter your answer for question {st.session_state.current_question + 1}")
-        # st.session_state.full_prompt += 'User Answer: ' + user_answer
-        
-        # # Add user's answer to conversation history
-        # st.session_state.conversation_history.append(f"User: {user_answer}")
-        # st.session_state.current_question += 1
+       
 
     elif not st.session_state.quiz_complete:
         # After all questions, generate the report card
