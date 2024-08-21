@@ -226,7 +226,7 @@ else:
         
         # Add ONLY the current question to conversation history
         # current_question_text = st.session_state.question.split("Now generate question number")[-1].strip()  # Extract the current question
-        conversation_history.append(f"<start_of_turn>model {question} </system> ")
+        conversation_history.append(f"<start_of_turn>model {question}  ")
     
         # React to user input
         user_answer = st.text_input(
