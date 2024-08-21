@@ -211,7 +211,7 @@ else:
         st.title('The length of prompt' + str(len(st.session_state.full_prompt)))
         
         # Generate the next question and append it to the full_prompt
-        st.session_state.question = f" Now generate {st.session_state.current_question + 1} question. <end_of_turn>"
+        st.session_state.question = f" Now generate question number {st.session_state.current_question + 1}. <end_of_turn>"
         st.session_state.full_prompt += st.session_state.question
         question = llm.invoke(st.session_state.full_prompt)
         print('QUESITON NO ', st.session_state.current_question, '  ', question)
