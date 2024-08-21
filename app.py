@@ -154,7 +154,7 @@ if concept:
         col1, col2, col3, col4 = st.columns([1, 3, 1, 1])
         with col2:
             st.markdown(
-            f'<p style="color: white; font-size: 24px; font-weight: bold;">Hey champ! Wanna take a quiz on <span style="color: #FFD700; font-size: 24px; font-weight: bold;">concept</span>?</p>',
+            f'<p style="color: white; font-size: 24px; font-weight: bold;">Hey champ! Wanna take a quiz on <span style="color: #FFD700; font-size: 24px; font-weight: bold;">{concept} </span>?</p>',
             unsafe_allow_html=True)
         with col3:
             if st.button("Yes"):
