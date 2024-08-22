@@ -8,10 +8,41 @@ from PIL import Image
 # HUGGINGFACEHUB_API_TOKEN =  st.secrets['HUGGINGFACEHUB_API_TOKEN']
 # os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
+st.markdown("""
+        <style>
+               .block-container {
+                    padding-top: 1.5rem;
+                    padding-left: 3rem;
+                    padding-right: 3rem;
+                    padding-bottom: -1rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
-# Simulated LLM functions (replace these with actual LLM API calls)
 
+st.markdown("""
+<style>
+.stButton > button {
+  background-color: #4CAF50; /* Green */
+  border: solid;
+  color: black;
+  padding: 11px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 32px;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+}
 
+.stButton > button:hover {
+  background-color: black; /* Change to black on hover */
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  color: red; /* Change the font color to red on hover */
+  font-weight: bold; /* Make the font bold on hover */
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # Initialize chat history
@@ -43,9 +74,26 @@ if 'system_prompt2' not in st.session_state:
     st.session_state.system_prompt2 = ""
 if 'question'  not in st.session_state:
     st.session_state.question = ''
+if  'quiz_rejection' not in st.session_state:
+    st.session_state.quiz_rejection = False
+
 
 def reset_conversation():
-  st.session_state.messages = []
+    st.session_state.yes_clicked = False
+    st.session_state.no_clicked = False
+    st.session_state.current_question = 0
+    st.session_state.quiz_complete = False
+    st.session_state.conversation_history = []
+    st.session_state.quiz_started = False
+    st.session_state.full_prompt = ''
+    st.session_state.user_answer = ""
+    st.session_state.system_prompt = ""
+    st.session_state.response = ''
+    st.session_state.system_prompt2 = ""
+    st.session_state.question = ''
+    st.session_state.concept = ''
+
+  
 
 # Define custom CSS styles for the widgets
 st.markdown(
@@ -79,29 +127,25 @@ st.markdown(
 )
 
 
-
-
 col1, col2, col3 = st.columns([0.2,0.05,  0.75])
 
 with col1:
-    st.image(Image.open('opaquelogo.png'))
-
-# col3.title("AI Tutor: Personalized Learning Experience")
+    st.image(Image.open('llm-2\opaquelogo.png'))
 
 col3.markdown(
     '<h1 style="font-family: \'Montserrat\', sans-serif; font-size: 2em;">AI Tutor: Personalized Learning Experience</h1>', 
     unsafe_allow_html=True
 )
 
-
-
-
 # All inputs in one line
-col1, col2, col3, col4 = st.columns([2,3,3,4])
+col1, col2, col3, col4,col5 = st.columns([2,3,3,4,1])
 
+
+with col1: 
+    difficulty_level = st.selectbox("**Depth**", ["Basic", "Intermediate", "Advanced"], key="depth")
 
 with col4:
-    concept = st.text_input("**Enter the Concept to learn:**", key="concept")
+    concept = st.text_input("**Enter the Concept Name to learn:**", key="concept")
 
 with col2:
     level = st.selectbox("**Learning level:**", ["College graduate", "10 years old", "PhD level"], key="level")
@@ -112,9 +156,9 @@ with col3:
         ["None", "Gamer", "Comic Fan", "Sci-Fi Enthusiast", "Sports Fan", "Music Lover", "Movie Buff"], 
         key="persona_style"
     )
+with col5:
+    st.button('Reset', on_click = reset_conversation)
 
-with col1: 
-    difficulty_level = st.selectbox("**Depth**", ["Basic", "Intermediate", "Advanced"], key="depth")
 
 if concept:
     # Define the system prompt
@@ -135,9 +179,6 @@ if concept:
     <end_of_turn>
     """
     
-    
-    # st.session_state.system_prompt = 'LLM PROMPT'
-    
 
 
     llm = HuggingFaceEndpoint(
@@ -147,13 +188,9 @@ if concept:
         top_k = 50,
         model_kwargs = {'add_to_git_credential': True}
     )
-
-
-
     
     st.session_state.response = llm.invoke(st.session_state.system_prompt)
     # Display assistant response in chat message container
-    # st.session_state.response = 'LLM RESPONSE'
     with st.chat_message("assistant"):
         st.markdown(st.session_state.response)
     # Add assistant response to chat history
@@ -167,13 +204,16 @@ if concept:
             f'<p style="color: white; font-size: 24px; font-weight: bold;">    Hey champ! Wanna take a quiz on <span style="color: #FFD700; font-size: 24px; font-weight: bold;">{concept} </span>?</p>',
             unsafe_allow_html=True)
         with col2:
-            if st.button("Yes"):
+            if st.button("YES 😃"):
                 st.session_state.quiz_started = True
+                st.session_state.quiz_rejection = False
         with col3:
-            if st.button("No"):
-                st.write("Okay, no quiz for now!")
+            if st.button("NO 😴"):
+                st.session_state.quiz_rejection = True
+                
 
-        
+if st.session_state.quiz_rejection:
+    st.title('OK, Now quiz for now!')
     
 conversation_history = []
 def handle_input_change():
@@ -184,22 +224,30 @@ def handle_input_change():
     conversation_history.append(f"<start_of_turn>user {user_answer} ")
     st.session_state.full_prompt +=   " ".join(conversation_history)
     st.session_state.current_question += 1
-
-
-
-
+    
 if not st.session_state.quiz_started:
 
     st.session_state.system_prompt2 = f"""
     <bos> <start_of_turn> user
-    Now, based on the concept explained:
-    1. Create a quiz with 5 questions in multiple choice format of '{difficulty_level}' level to assess the user's understanding.
-    2. Identify any areas where the user struggled and provide additional explanations for those topics based on the user's answers.
-    3. Present one question at a time. After the user responds, immediately present the next question without providing any commentary or reference to previous questions.
-    4. After 5 questions, present a report card detailing the user's performance, including correct and incorrect answers.
+    You are an AI-powered quiz generator. Your task is to create a multiple-choice quiz based on the concept previously explained. Follow these instructions carefully:
+    1. Generate only one question at a time.
+    2. Wait for the user's answer before generating the next question.
+    3. Do not provide any commentary or explanations between questions.
+    4. Do not generate the report card until explicitly instructed to do so.
+    5. Maintain a count of the questions generated and answered.
+    6. Format each question as follows:
 
-    For each question, only provide the question text and answer options. Do not include any additional instructions or commentary.
-    """
+    Question [number]: [Question text]
+    A) [Option A]
+    B) [Option B]
+    C) [Option C]
+    D) [Option D]
+
+    7. After receiving the user's answer, immediately proceed to generate the next question without any additional response.
+    8. If you receive the instruction "GENERATE_REPORT_CARD", provide a summary of the user's performance.
+
+    Remember: Generate only one question at a time, and do not proceed to the next question or the report card without explicit instruction.
+        """
 
     # st.session_state.system_prompt2 = 'QUIZ PROMPT'
     st.session_state.full_prompt = st.session_state.system_prompt + " " + \
@@ -208,41 +256,33 @@ if not st.session_state.quiz_started:
     
 else:
     if st.session_state.current_question < 5:
-        st.title('The length of prompt' + str(len(st.session_state.full_prompt)))
         
         # Generate the next question and append it to the full_prompt
-        st.session_state.question = f" Now generate question number {st.session_state.current_question + 1}. <end_of_turn> <start_of_turn>model "
+        st.session_state.question = f" Generate the next question. <end_of_turn> <start_of_turn>model "
         st.session_state.full_prompt += st.session_state.question
         question = llm.invoke(st.session_state.full_prompt)
         print('QUESITON NO ', st.session_state.current_question, '  ', question)
         
-        # question = 'LLM ANSWER  ' + str(st.session_state.current_question)
         # Display the question
         with st.chat_message("assistant"):
             st.markdown(question)
 
-        # st.session_state.full_prompt += question
-
         
         # Add ONLY the current question to conversation history
-        # current_question_text = st.session_state.question.split("Now generate question number")[-1].strip()  # Extract the current question
         conversation_history.append(f"<start_of_turn>model {question}  ")
     
         # React to user input
         user_answer = st.text_input(
-        f"Enter your answer for question {st.session_state.current_question + 1}",
-        key=f"user_answer_{st.session_state.current_question}",
-        on_change=handle_input_change
-    )   
+        f"Enter your answer for question {st.session_state.current_question + 1}", key=f"user_answer_{st.session_state.current_question}", max_chars = 5,
+        on_change=handle_input_change)   
         
     if st.session_state.current_question == 5:
         st.title('REPORT GENERATED')
-        st.session_state.full_prompt  += "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn><start_of_turn> model"
+        st.session_state.full_prompt  += "<start_of_turn>user GENERATE REPORT CARD <end_of_turn><start_of_turn> model"
         with st.chat_message("assistant"):
             report = llm.invoke(st.session_state.full_prompt)
-            print('LLM REPORT', report)
+            st.session_state.full_prompt += report
+            print('LLM REPORT ', len(report) , report)
             st.markdown(report)
 
 
-st.title('-------------------')
-st.write(st.session_state.full_prompt)
