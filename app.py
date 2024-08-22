@@ -233,9 +233,8 @@ if not st.session_state.quiz_started:
     1. Generate only one question at a time.
     2. Wait for the user's answer before generating the next question.
     3. Do not provide any commentary or explanations between questions.
-    4. Do not generate the report card until explicitly instructed to do so.
-    5. Maintain a count of the questions generated and answered.
-    6. Format each question as follows:
+    4. Maintain a count of the questions generated and answered.
+    5. Format each question as follows:
 
     Question [number]: [Question text]
     A) [Option A]
@@ -243,10 +242,9 @@ if not st.session_state.quiz_started:
     C) [Option C]
     D) [Option D]
 
-    7. After receiving the user's answer, immediately proceed to generate the next question without any additional response.
-    8. If you receive the instruction "GENERATE_REPORT_CARD", provide a summary of the user's performance.
+    6. After receiving the user's answer, immediately proceed to generate the next question only without any additional response.
 
-    Remember: Generate only one question at a time, and do not proceed to the next question or the report card without explicit instruction.
+    Remember: Generate only one question at a time, and do not proceed to the next question without explicit instruction.
         """
 
     # st.session_state.system_prompt2 = 'QUIZ PROMPT'
@@ -279,7 +277,10 @@ else:
         
     if st.session_state.current_question == 5:
         st.title('REPORT GENERATED')
-        st.session_state.full_prompt  += "<start_of_turn>user GENERATE REPORT CARD <end_of_turn><start_of_turn> model"
+        report_prompt = '''
+         Now based on all the 5 questions you asked and the user's answers for those questions, generate a report saying how many were right and wrong and what areas are his strengths and what he needed to improve.
+        '''
+        st.session_state.full_prompt  += """<start_of_turn>user {report_prompt} <end_of_turn><start_of_turn> model"""
         with st.chat_message("assistant"):
             report = llm.invoke(st.session_state.full_prompt)
             st.session_state.full_prompt += report
