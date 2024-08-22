@@ -130,7 +130,7 @@ st.markdown(
 col1, col2, col3 = st.columns([0.2,0.05,  0.75])
 
 with col1:
-    st.image(Image.open('llm-2\opaquelogo.png'))
+    st.image(Image.open('opaquelogo.png'))
 
 col3.markdown(
     '<h1 style="font-family: \'Montserrat\', sans-serif; font-size: 2em;">AI Tutor: Personalized Learning Experience</h1>', 
