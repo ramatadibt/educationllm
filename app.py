@@ -133,7 +133,7 @@ with col1:
     st.image(Image.open('opaquelogo.png'))
 
 col3.markdown(
-    '<h1 style="font-family: \'Montserrat\', sans-serif; font-size: 2em;">LearnSmart: Personalized Learning Experience</h1>', 
+    '<h1 style="font-family: \'Montserrat\', sans-serif; font-size: 2em;">AI Tutor: Personalized Learning Experience</h1>', 
     unsafe_allow_html=True
 )
 
