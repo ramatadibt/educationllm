@@ -241,7 +241,7 @@ else:
         with st.chat_message("assistant"):
             report = llm.invoke(st.session_state.full_prompt)
             print('LLM REPORT', llm)
-            st.markdown(llm.invoke(report_prompt))
+            st.markdown(llm.invoke(report))
 
 
 st.title('-------------------')
