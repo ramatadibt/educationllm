@@ -258,7 +258,8 @@ else:
     if st.session_state.current_question < 5:
         
         # Generate the next question and append it to the full_prompt
-        st.session_state.question = f" Generate the next question. <end_of_turn> <start_of_turn>model "
+        # st.session_state.question = f" Generate the next question. <end_of_turn> <start_of_turn>model "
+        st.session_state.question = f"   <end_of_turn> <start_of_turn>model "
         st.session_state.full_prompt += st.session_state.question
         question = llm.invoke(st.session_state.full_prompt)
         print('QUESITON NO ', st.session_state.current_question, '  ', question)
