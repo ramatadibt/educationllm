@@ -240,8 +240,8 @@ else:
         st.session_state.full_prompt  += "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn>"
         with st.chat_message("assistant"):
             report = llm.invoke(st.session_state.full_prompt)
-            print('LLM REPORT', llm)
-            st.markdown(llm.invoke(report))
+            print('LLM REPORT', report)
+            st.markdown(report)
 
 
 st.title('-------------------')
