@@ -280,11 +280,11 @@ else:
         report_prompt = '''
          Now based on all the 5 questions you asked and the user's answers for those questions, generate a report saying how many were right and wrong and what areas are his strengths and what he needed to improve.
         '''
-        st.session_state.full_prompt  += """<start_of_turn>user {report_prompt} <end_of_turn><start_of_turn> model"""
+        st.session_state.full_prompt  += f"""<start_of_turn>user {report_prompt} <end_of_turn><start_of_turn> model"""
+        report = llm.invoke(st.session_state.full_prompt)
+        st.session_state.full_prompt += report
+        print('LLM REPORT ', len(report) , report)
         with st.chat_message("assistant"):
-            report = llm.invoke(st.session_state.full_prompt)
-            st.session_state.full_prompt += report
-            print('LLM REPORT ', len(report) , report)
             st.markdown(report)
 
 
