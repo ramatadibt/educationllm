@@ -237,10 +237,10 @@ else:
         
     if st.session_state.current_question == 5:
         st.title('REPORT GENERATED')
-        print('^^^^^^^^^^^^^^^^^^^^^^')
-        print('***********************')
-        report_prompt = st.session_state.full_prompt  + "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn>"
+        st.session_state.full_prompt  += "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn>"
         with st.chat_message("assistant"):
+            report = llm.invoke(st.session_state.full_prompt)
+            print('LLM REPORT', llm)
             st.markdown(llm.invoke(report_prompt))
 
 
