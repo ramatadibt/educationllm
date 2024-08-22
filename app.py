@@ -237,7 +237,7 @@ else:
         
     if st.session_state.current_question == 5:
         st.title('REPORT GENERATED')
-        st.session_state.full_prompt  += "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn>"
+        st.session_state.full_prompt  += "<start_of_turn>user Now, provide a report card of the quiz, showing how many questions were correct and how many were wrong.<end_of_turn><start_of_turn> model"
         with st.chat_message("assistant"):
             report = llm.invoke(st.session_state.full_prompt)
             print('LLM REPORT', report)
